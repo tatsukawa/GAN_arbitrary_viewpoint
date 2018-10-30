@@ -38,11 +38,8 @@ class Block(chainer.Chain):
 
     def residual(self, x, z, **kwargs):
         h = x
-        # zは(batch_size, dim)になっている
-        # xは(batch_size, channel, height, width)になっている
         _b, _c, _h, _w = h.shape
 
-        # これが良いのかという問題がある. とりあえず試してみるだけ
         _z = F.broadcast_to(
             F.reshape(z, (z.shape[0], z.shape[1], 1, 1)),
             (z.shape[0], z.shape[1], _h, _w)
@@ -87,7 +84,6 @@ class Generator(chainer.Chain):
         self.dim_z = dim_z
         with self.init_scope():
             # Encoder
-            # TODO: :thinking_face:
             self.block1 = Block(init_ch,      ch, activation=activation, batch_size=batch_size, is_shortcut=True , dim_z=dim_z)
             self.block2 = Block(     ch,  ch * 2, activation=activation, batch_size=batch_size, is_shortcut=True , dim_z=dim_z)
             self.block3 = Block( ch * 2,  ch * 2, activation=activation, batch_size=batch_size, is_shortcut=True , dim_z=dim_z)

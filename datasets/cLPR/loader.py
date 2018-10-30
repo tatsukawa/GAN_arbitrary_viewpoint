@@ -5,7 +5,7 @@ import numpy as np
 
 
 def load(data_size=9260,
-        path='/home/i18_t_tatsukawa/cLPR/imgs_jpg'):
+        path='cLPR/imgs_jpg'):
     """
 
     [1] https://github.com/yvan/cLPR
@@ -24,7 +24,7 @@ def load(data_size=9260,
 
 
 def get_ref_and_real_data(indexes, size=9261,
-        path='/home/i18_t_tatsukawa/cLPR/imgs_jpg'):
+        path='cLPR/imgs_jpg'):
     """
 
     [1] https://github.com/yvan/cLPR
@@ -40,10 +40,10 @@ def get_ref_and_real_data(indexes, size=9261,
 
         filename = 'cube1_index_{}.jpg'.format(index)
         filename = os.path.join(path, filename)
-        x_ref = np.asarray(Image.open(filename)).transpose(2,0,1)
+        x_ref = np.asarray(Image.open(filename)).transpose(2, 0, 1)
         refs.append(x_ref)
 
-        real_noise = np.random.choice([-1, 1])  # +1 or -1 をL個生成
+        real_noise = np.random.choice([-1, 1])  # L data is generated. Each element in the data is +1 or -1.
         j = (index + real_noise + size) % size
         filename = 'cube1_index_{}.jpg'.format(j)
         filename = os.path.join(path, filename)

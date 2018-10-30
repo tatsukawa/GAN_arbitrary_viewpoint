@@ -167,23 +167,3 @@ class Updater(chainer.training.StandardUpdater):
                 loss_dis.backward()
                 dis_optimizer.update()
                 chainer.report({'loss': loss_dis}, dis)
-
-# sigmoid_cross_entropy(x,1) = softplus(-x)
-# sigmoid_cross_entropy(x,0) = softplus(x)
-
-        # TODO: fix this code
-        #is_independent_noise = False
-        #if is_independent_noise:
-        #    eps = np.random.binomial(1, 0.5, len(batch))
-
-
-#        if self.add_noise_to_dis:
-#            _eps = F.broadcast_to(eps, (_h*_w, _b, eps.shape[-1]))
-#            _eps = F.transpose(_eps, (1, 2, 0))
-#            _eps = F.reshape(_eps, (_b, eps.shape[-1], _h, _w))
-#            in_dis_x = F.concat((x_real, x_ref, _eps))
-#         if self.add_noise_to_dis:
-#            _eps = F.broadcast_to(eps, (_h*_w, _b, eps.shape[-1]))
-#            _eps = F.transpose(_eps, (1, 2, 0))
-#            _eps = F.reshape(_eps, (_b, eps.shape[-1], _h, _w))
-#            in_dis_x = F.concat((x_gen, x_ref, _eps))

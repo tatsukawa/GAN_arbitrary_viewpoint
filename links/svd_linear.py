@@ -24,6 +24,8 @@ class SVDLinear(link.Link):
         with self.init_scope():
             U_initializer = initializers._get_initializer(initialU)
             V_initializer = initializers._get_initializer(initialV)
+
+            # Is it dirty code?
             self.U = Parameter(V_initializer)
             self.U.to_gpu()
             self.V = Parameter(U_initializer)
@@ -47,7 +49,7 @@ class SVDLinear(link.Link):
         self.V.initialize((self.out_size, self.k))
 
     def __call__(self, x):
-        """Applies the linear layer.
+        """Applies the linear layer. However, I checked this code for simple data, It does not work...
         Args:
             x (~chainer.Variable): Batch of input vectors.
         Returns:
@@ -57,7 +59,6 @@ class SVDLinear(link.Link):
             in_size = x.shape[1]
             self._initialize_params(in_size)
 
-        batch_size = x.shape[0]
         # x: (batch_size, CxHxW)
         # V: (CxHxW, k)
         # W: (k, CxHxW)

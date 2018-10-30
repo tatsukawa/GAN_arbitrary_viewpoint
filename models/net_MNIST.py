@@ -1,3 +1,7 @@
+"""
+This code is from
+"""
+
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
 
@@ -22,14 +26,10 @@ class Generator(chainer.Chain):
         self.bottom_size = bottom_size
         self.ch = ch
         super(Generator, self).__init__(
-            # n_in, n_out
-            c1=L.Convolution2D(init_ch+dim_z, ch, ksize=4, stride=2, pad=1), # for concat
+            c1=L.Convolution2D(init_ch+dim_z, ch, ksize=4, stride=2, pad=1),
             c2=L.Convolution2D(ch, 2*ch, ksize=4, stride=2, pad=1),
-            #   -> 128*(7*7)
             l0z=L.Linear(2*ch*(bottom_size//4)*(bottom_size//4), 2*ch*(bottom_size//4)*(bottom_size//4), initialW=initializer),
-            # 128*7*7 -> 64*(14*14)  # h = (stride * (input - 1) + kernel - 2 * padding
             dc1=L.Deconvolution2D(2*ch, ch, 4, stride=2, pad=1, initialW=initializer),
-            # 64*(14*14) -> 1*(28*28)
             dc2=L.Deconvolution2D(ch, 1, 4, stride=2, pad=1, initialW=initializer),
             bn0=L.BatchNormalization(ch),
             bn1=L.BatchNormalization(ch*2),
@@ -60,13 +60,13 @@ class Discriminator(chainer.Chain):
         super(Discriminator, self).__init__(
             c0=L.Convolution2D(init_ch+dim_z, ch, ksize=4, stride=2, pad=1, initialW=initializer),
             c1=L.Convolution2D(ch, 2*ch, ksize=4, stride=2, pad=1, initialW=initializer),
-            l2=L.Linear(2*ch * (bottom_size // 4) * (bottom_size // 4), 1, initialW=initializer),  # 1 output (num of output of mattyaDCGAN is 2)
+            l2=L.Linear(2*ch * (bottom_size // 4) * (bottom_size // 4), 1, initialW=initializer),
             bn0=L.BatchNormalization(64),
             bn1=L.BatchNormalization(128),
         )
 
     def __call__(self, x, z):
-        # ここで同じshapeであるという強い仮定が入る
+        # x's shape is the same z's shape.
         h = F.concat((x, z), axis=1)
         h = F.leaky_relu(self.bn0(self.c0(h)))
         h = F.leaky_relu(self.bn1(self.c1(h)))

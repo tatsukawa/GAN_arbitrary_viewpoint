@@ -55,20 +55,38 @@ def main():
     with open(os.path.join(args.config_path, 'config.yml'), 'r+') as f:
         config = AttributeDict(yaml.load(f))
 
-
     print('GPU: {}'.format(args.gpu))
     print('# Minibatch-size: {}'.format(config.batch_size))
     print('# iteration: {}'.format(config.iteration))
     print('')
 
-    from dis_models.discriminator import Discriminator
-    from gen_models.generator import Generator
-#    from models.net_MNIST_no_encode import Generator
-#    from models.net_MNIST import Discriminator
-    if config.dataset == 'coil100':
-        init_ch = 3
-    else:
+    if config.dataset == 'mnist':
+        from models.net_MNIST_no_encode import Generator
+        from models.net_MNIST import Discriminator
+        from datasets.mnist.loader import get_ref_and_real_data
+        train, _ = chainer.datasets.get_mnist(withlabel=False, ndim=3, scale=255.)  # ndim=3 : (ch,width,height)
+        ref_images = train[:args.visualize_size]
+        data = get_ref_and_real_data(ref_images, 0.4, 20)
         init_ch = 1
+    elif config.dataset == 'coil20':
+        from dis_models.discriminator import Discriminator
+        from gen_models.generator import Generator
+        from datasets.coil20.loader import get_ref_and_real_data, get_train_index, get_train_index_rand
+        train = get_train_index()
+        indexes = get_train_index_rand(size=args.visualize_size)
+        ref_index = train[indexes]
+        data = get_ref_and_real_data(ref_index, img_size=config.img_size, dim_noise=config.dim_noise, dif_index=config.dif_index)
+        init_ch = 1
+    elif args.dataset == 'coil100':
+        from dis_models.discriminator import Discriminator
+        from gen_models.generator import Generator
+        from datasets.coil100.loader import get_ref_and_real_data, get_train_index, get_train_index_rand
+        train = get_train_index()
+        indexes = get_train_index_rand(size=args.visualize_size)
+        ref_index = train[indexes]
+        data = get_ref_and_real_data(ref_index, img_size=config.img_size, dim_noise=config.dim_noise, dif_index=config.dif_index)
+        init_ch = 3
+
     gen = Generator(init_ch=init_ch, dim_z=config.dim_noise, bottom_size=config.img_size)
     dis = Discriminator(init_ch=init_ch, dim_z=config.dim_noise, bottom_size=config.img_size)
 
@@ -80,23 +98,6 @@ def main():
     serializers.load_npz(args.dis_snapshot, dis)
     serializers.load_npz(args.gen_snapshot, gen)
 
-    if config.dataset == 'mnist':
-        train, _ = chainer.datasets.get_mnist(withlabel=False, ndim=3, scale=255.)  # ndim=3 : (ch,width,height)
-        ref_images = train[:args.visualize_size]
-        from datasets.mnist.loader import get_ref_and_real_data
-        data = get_ref_and_real_data(ref_images, 0.4, 20)
-    elif config.dataset == 'coil20':
-        from datasets.coil20.loader import get_ref_and_real_data, get_train_index, get_train_index_rand
-        train = get_train_index()
-        indexes = get_train_index_rand(size=args.visualize_size)
-        ref_index = train[indexes]
-        data = get_ref_and_real_data(ref_index, img_size=config.img_size, dim_noise=config.dim_noise, dif_index=config.dif_index)
-    elif args.dataset == 'coil100':
-        from datasets.coil100.loader import get_ref_and_real_data, get_train_index, get_train_index_rand
-        train = get_train_index()
-        indexes = get_train_index_rand(size=args.visualize_size)
-        ref_index = train[indexes]
-        data = get_ref_and_real_data(ref_index, img_size=config.img_size, dim_noise=config.dim_noise, dif_index=config.dif_index)
 
     z = [1.0]
     for i in range(config.dim_noise - 1):

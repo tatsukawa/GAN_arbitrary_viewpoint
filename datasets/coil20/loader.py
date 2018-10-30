@@ -32,7 +32,7 @@ def make_probability(dim=3, var=0.1):
 def get_image(
         cls,
         index,
-        path='/home/i18_t_tatsukawa/coil-20-proc',
+        path='coil-20-proc',
         img_size=128):
 
     filename = 'obj{}__{}.png'.format(cls, index)
@@ -66,7 +66,7 @@ def get_ref_and_real_data(indexes, size_per_class=72,
                           classes=20,
                           dim_noise=3,
                           img_size=128,
-                          path='/home/i18_t_tatsukawa/coil-20-proc',
+                          path='coil-20-proc',
                           dif_index=1):
     """
 
@@ -80,7 +80,7 @@ def get_ref_and_real_data(indexes, size_per_class=72,
 
     for index in indexes:
 
-        cls = math.floor(index / size_per_class) + 1 # class0は存在しない
+        cls = math.floor(index / size_per_class) + 1 # no exist class 0
         num = index % size_per_class
 
         refs.append(get_image(cls=cls, index=num, path=path, img_size=img_size))
@@ -103,16 +103,11 @@ if __name__ == '__main__':
 
         # 40, 1, 32, 32
         x = np.concatenate((x_ref, x_real), axis=0)
-#        x = x * 255
-#        x = x.clip(0.0, 255.0)
-        # gen_output_activation_func is sigmoid
         x = np.asarray(x, dtype=np.uint8)
         _, _, H, W = x.shape
 
 
         x = np.reshape(x, (2, 1, H, W))
-        # x = np.asarray(np.clip((x+1) * 0.5 * 255, 0.0, 255.0), dtype=np.uint8)
-        # x = x.reshape((n_images, 3, 1, H, W))
         # col, row, ch, H, W -> col, H, row, W, ch
         x = x.transpose((0, 2, 1, 3))
         x = x.reshape((2 * H, 1 * W))
@@ -120,6 +115,5 @@ if __name__ == '__main__':
         img = Image.fromarray(x)
         plt.imshow(img)
         plt.pause(.01)
-#        time.sleep(0.1)
 
 

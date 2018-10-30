@@ -21,10 +21,8 @@ def out_generated_image(gen, data, dst, device):
         width = x_ref.shape[-1]
         height = x_ref.shape[-2]
         channel = x_ref.shape[-3]
-        # (10, 1, 28, 28)
         xp = gen.xp
 
-        # TODO: fix hard coding
         image_size = batch
 
         converter = chainer.dataset.concat_examples

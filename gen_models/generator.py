@@ -39,11 +39,8 @@ class Block(chainer.Chain):
 
     def residual(self, x, z, **kwargs):
         h = x
-        # zは(batch_size, dim)になっている
-        # xは(batch_size, channel, height, width)になっている
-        _b, _c, _h, _w = h.shape
 
-        # これが良いのかという問題がある. とりあえず試してみるだけ
+        _b, _c, _h, _w = h.shape
         _z = F.broadcast_to(
             F.reshape(z, (z.shape[0], z.shape[1], 1, 1)),
             (z.shape[0], z.shape[1], _h, _w)
@@ -82,8 +79,8 @@ class Generator(chainer.Chain):
     def __init__(self, init_ch=6, ch=8, out_ch=3, activation=F.relu, distribution="normal", batch_size=64, dim_z=3, bottom_size=32):
         super(Generator, self).__init__()
         initializer = chainer.initializers.GlorotUniform()
-        initializer_u = chainer.initializers.Uniform(scale=1)
-        initializer_v = chainer.initializers.Uniform(scale=1)
+        #initializer_u = chainer.initializers.Uniform(scale=1)
+        #initializer_v = chainer.initializers.Uniform(scale=1)
         self.activation = activation
         self.distribution = distribution
         self.batch_size = batch_size
@@ -91,12 +88,13 @@ class Generator(chainer.Chain):
         self.ch = ch
         with self.init_scope():
             # Encoder
-            # TODO: :thinking_face:
             self.enc1 = Block(init_ch,      ch, activation=activation, batch_size=batch_size, is_shortcut=True , dim_z=dim_z)
             self.enc2 = Block(     ch,  ch*2, activation=activation, batch_size=batch_size, is_shortcut=True , dim_z=dim_z)
             self.enc3 = Block( ch*2,  ch*2, activation=activation, batch_size=batch_size, is_shortcut=True , dim_z=dim_z)
             self.linear = L.Linear(ch * 2 * (bottom_size * bottom_size), ch * 2 * (bottom_size * bottom_size))
-            #self.linear = SVDLinear(ch * 4 * (bottom_size * bottom_size), (ch * 4 * (bottom_size * bottom_size)), k=(bottom_size * bottom_size * ch * 4), initialU=initializer_u, initialV=initializer_v)
+            # WIP: I have not finished implemented this.
+            # This code means reduction of dimension.
+            # self.linear = SVDLinear(ch * 4 * (bottom_size * bottom_size), (ch * 4 * (bottom_size * bottom_size)), k=(bottom_size * bottom_size * ch * 4), initialU=initializer_u, initialV=initializer_v)
             self.b4 = L.BatchNormalization(ch * 2 * (bottom_size * bottom_size))
             self.dec1 = Block(ch * 2, ch * 2, activation=activation, batch_size=batch_size, is_shortcut=False, dim_z=dim_z)
             self.dec2 = Block(ch * 2, ch, activation=activation, batch_size=batch_size, is_shortcut=False, dim_z=dim_z)

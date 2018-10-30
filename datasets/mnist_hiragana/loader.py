@@ -1,13 +1,12 @@
 import os
-import re
 import glob
 import numpy as np
 from PIL import Image
 
 
-def read(size=5):
-    filenames = [filename for filename in glob.glob('./datasets/mnist_hiragana/hiragana_images/*.jpg')]
-    filenames = np.random.choice(filenames, size)
+def read(path, n=5):
+    filenames = [filename for filename in glob.glob(os.path.join(path,'hiragana_images/*.jpg'))]
+    filenames = np.random.choice(filenames, n)
     data = []
     print(filenames)
     for filename in filenames:
@@ -18,10 +17,11 @@ def read(size=5):
         data.append(np.asarray(img))
 
     data = np.array(data)
-    data = data.reshape((size, 1, 28, 28))
+    data = data.reshape((n, 1, 28, 28))
     return data
 
 
 if __name__ == '__main__':
-    a = read(5)
+    path = './mnist_hiragana'
+    a = read(path, 5)
     print(a)
