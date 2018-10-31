@@ -2,6 +2,13 @@
 
 Most source codes are referenced from [GANs with spectral normalization and projection discriminator](https://github.com/pfnet-research/sngan_projection)
 
+## What is this
+
+The goal is high-quality novel view synthesis.
+We proposed a modified CGAN using controllable noise to achieve this.
+
+![Architecture](https://github.com/tatsukawa/GAN_arbitrary_viewpoint/blob/master/images/architecture.png)
+
 ## How to use
 Firstly, you have to download datasets.
 So, please see the dataset repository.
