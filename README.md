@@ -1,6 +1,6 @@
 # Generate Image in Arbitrary Viewpoint using Controllable Noise
 
-Most source codes are referenced from [GANs with spectral normalization and projection discriminator](https://github.com/pfnet-research/sngan_projection)
+Most source codes referenced from [GANs with spectral normalization and projection discriminator](https://github.com/pfnet-research/sngan_projection)
 
 ## What is this
 
