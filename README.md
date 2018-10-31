@@ -32,4 +32,5 @@ python3 predict.py --config_path result --gen_snapshot result/gen_snapshot --dis
 ## Result
 
 This is a rotation image when coil20 dataset is given once.
+
 ![COIL20 result](https://github.com/tatsukawa/GAN_arbitrary_viewpoint/blob/master/images/rot.gif)
